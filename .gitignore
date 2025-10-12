@@ -44,3 +44,4 @@ examples/*/*/*/.settings
 examples/*/*/*/Debug
 examples/*/*/*/Release
 CMakeSettings.json
+CMakeUserPresets.json
