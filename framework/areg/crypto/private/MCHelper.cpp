@@ -17,7 +17,7 @@
 #include "MCHelper.hpp"
 
 //////////////////////////////////////////////////////////////////////////
-// A non-cachable memory clean function
+// A non-cacheable memory clean function
 //////////////////////////////////////////////////////////////////////////
 void *MiniCrypt::memset(void *ptr, int value, std::size_t size) {
     volatile uint8_t *volatile p = (volatile uint8_t *volatile)ptr;
