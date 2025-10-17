@@ -13,6 +13,9 @@ This directory contains the source code for the AREG Framework, also known as th
 - **[component](./component)**
   Implements the core business logic of the communication engine, enabling the creation of service components and automation processes.
 
+- **[system](./crypto)**
+  Cryptographic support for areg and supported back-ends..
+
 - **[ipc](./ipc)**
   Includes components for inter-process communication (IPC).
 

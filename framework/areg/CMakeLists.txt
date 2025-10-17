@@ -6,6 +6,7 @@ include("${AREG_FRAMEWORK}/areg/component/private/CMakeLists.txt")
 include("${AREG_FRAMEWORK}/areg/ipc/private/CMakeLists.txt")
 include("${AREG_FRAMEWORK}/areg/persist/private/CMakeLists.txt")
 include("${AREG_FRAMEWORK}/areg/logging/private/CMakeLists.txt")
+include("${AREG_FRAMEWORK}/areg/crypto/private/CMakeLists.txt")
 
 if ((${AREG_DEVELOP_ENV} MATCHES "Win32") AND (NOT MINGW))
     set_source_files_properties("${AREG_FRAMEWORK}/areg/resources/areg.rc" PROPERTIES LANGUAGE RC)
@@ -50,7 +51,7 @@ target_compile_options(areg PRIVATE "${AREG_OPT_DISABLE_WARN_COMMON}" "${AREG_OP
 target_link_libraries(areg PRIVATE ${AREG_LDFLAGS})
 
 # copying log and router init files to 'bin/config'
-add_custom_command( TARGET areg POST_BUILD 
+add_custom_command( TARGET areg POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config
                     COMMAND ${CMAKE_COMMAND} -E copy ${AREG_FRAMEWORK}/areg/resources/areg.init ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config/areg.init
                     VERBATIM)

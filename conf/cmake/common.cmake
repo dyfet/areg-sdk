@@ -101,7 +101,7 @@ remove_definitions(-D_MBCS -DMBCS)
 set(AREG_OPT_DISABLE_WARN_COMMON)
 # Disable warnings only for areg framework
 set(AREG_OPT_DISABLE_WARN_FRAMEWORK)
-# Disable warnings only for tools 
+# Disable warnings only for tools
 set(AREG_OPT_DISABLE_WARN_TOOLS)
 # Disable warnings only for examples
 set(AREG_OPT_DISABLE_WARN_EXAMPLES)
@@ -147,6 +147,12 @@ if (AREG_EXTENDED)
     endif()
 else()
     add_definitions(-DAREG_EXTENDED=0)
+endif()
+
+if (AREG_CRYPTO)
+    add_definitions(-DAREG_CRYPTO=1)
+else()
+    add_definitions(-DAREG_CRYPTO=0)
 endif()
 
 if (AREG_LOGS)
