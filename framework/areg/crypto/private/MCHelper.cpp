@@ -28,7 +28,7 @@ void *MiniCrypt::memset(void *ptr, int value, std::size_t size) {
     return ptr;
 }
 
-void MiniCrypt::safememcpy(void *outp, const void *inp, std::size_t len) {
+void MiniCrypt::memcpy(void *outp, const void *inp, std::size_t len) {
     if (!outp || !inp || outp == inp || len == 0) return;
     uint8_t *out = (uint8_t *)outp;
     const uint8_t *in = (uint8_t *)inp;

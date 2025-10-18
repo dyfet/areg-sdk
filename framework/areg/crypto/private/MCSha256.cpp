@@ -132,7 +132,7 @@ void sha256_compress(MiniCrypt::sha256_ctx& ctx, const uint8_t block[64]) {
 } // end namespace
 
 void MiniCrypt::sha256_init(MiniCrypt::sha256_ctx& ctx) {
-    MiniCrypt::safememcpy(ctx.state, sha256_initial_state, sizeof(sha256_initial_state));
+    MiniCrypt::memcpy(ctx.state, sha256_initial_state, sizeof(sha256_initial_state));
     ctx.total_len = 0;
     ctx.buffer_len = 0;
 }
@@ -143,7 +143,7 @@ int MiniCrypt::sha256_update(MiniCrypt::sha256_ctx& ctx, const uint8_t *in, size
     while (inlen > 0) {
         std::size_t space = MC_SHA256_BLOCK_SIZE - ctx.buffer_len;
         std::size_t to_copy = (inlen < space) ? inlen : space;
-        MiniCrypt::safememcpy(ctx.buffer + ctx.buffer_len, in, to_copy);
+        MiniCrypt::memcpy(ctx.buffer + ctx.buffer_len, in, to_copy);
         ctx.buffer_len += to_copy;
         in += to_copy;
         inlen -= to_copy;
@@ -174,12 +174,12 @@ int MiniCrypt::sha256_final(MiniCrypt::sha256_ctx& ctx, uint8_t *out) {
 }
 
 int MiniCrypt::sha256_digest(const void *data, std::size_t size, uint8_t *out, const uint8_t *salt) {
-    MiniCrypt::sha256_ctx ctx;
-    MiniCrypt::sha256_init(ctx);
+    sha256_ctx ctx;
+    sha256_init(ctx);
     if (salt)
-        MiniCrypt::sha256_update(ctx, salt, 16);
-    MiniCrypt::sha256_update(ctx, static_cast<const uint8_t *>(data), size);
-    return MiniCrypt::sha256_final(ctx, out);
+        sha256_update(ctx, salt, 16);
+    sha256_update(ctx, static_cast<const uint8_t *>(data), size);
+    return sha256_final(ctx, out);
 }
 
 #endif
