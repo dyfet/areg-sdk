@@ -141,13 +141,13 @@ int MiniCrypt::sha256_update(MiniCrypt::sha256_ctx& ctx, const uint8_t *in, size
     if (!in && inlen > 0) return -1;
     ctx.total_len += inlen;
     while (inlen > 0) {
-        std::size_t space = MC_SHA256_BLOCK_SIZE - ctx.buffer_len;
+        std::size_t space = SHA256_BLOCK_SIZE - ctx.buffer_len;
         std::size_t to_copy = (inlen < space) ? inlen : space;
         MiniCrypt::memcpy(ctx.buffer + ctx.buffer_len, in, to_copy);
         ctx.buffer_len += to_copy;
         in += to_copy;
         inlen -= to_copy;
-        if (ctx.buffer_len == MC_SHA256_BLOCK_SIZE) {
+        if (ctx.buffer_len == SHA256_BLOCK_SIZE) {
             sha256_compress(ctx, ctx.buffer);
             ctx.buffer_len = 0;
         }
@@ -156,12 +156,12 @@ int MiniCrypt::sha256_update(MiniCrypt::sha256_ctx& ctx, const uint8_t *in, size
 }
 
 int MiniCrypt::sha256_final(MiniCrypt::sha256_ctx& ctx, uint8_t *out) {
-    uint8_t pad[MC_SHA256_BLOCK_SIZE + 8] = {0};
+    uint8_t pad[SHA256_BLOCK_SIZE + 8] = {0};
     uint64_t bit_len = ctx.total_len * 8;
 
     pad[0] = 0x80;
     std::size_t rem = ctx.buffer_len;
-    std::size_t pad_len = (rem < 56) ? (56 - rem) : (MC_SHA256_BLOCK_SIZE + 56 - rem);
+    std::size_t pad_len = (rem < 56) ? (56 - rem) : (SHA256_BLOCK_SIZE + 56 - rem);
     for (int i = 0; i < 8; ++i) {
         pad[pad_len + i] = (uint8_t)(bit_len >> (56 - 8 * i));
     }

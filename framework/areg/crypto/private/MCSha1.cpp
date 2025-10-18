@@ -108,13 +108,13 @@ int MiniCrypt::sha1_update(sha1_ctx& ctx, const uint8_t *data, std::size_t len) 
     ctx.total_len += len;
     std::size_t offset = 0;
     while (len > 0) {
-        std::size_t space = MC_SHA1_BLOCK_SIZE - ctx.buffer_len;
+        std::size_t space = SHA1_BLOCK_SIZE - ctx.buffer_len;
         std::size_t to_copy = (len < space) ? len : space;
         MiniCrypt::memcpy(ctx.buffer + ctx.buffer_len, data + offset, to_copy);
         ctx.buffer_len += to_copy;
         offset += to_copy;
         len -= to_copy;
-        if (ctx.buffer_len == MC_SHA1_BLOCK_SIZE) {
+        if (ctx.buffer_len == SHA1_BLOCK_SIZE) {
             sha1_compress(ctx, ctx.buffer);
             ctx.buffer_len = 0;
         }
@@ -123,11 +123,11 @@ int MiniCrypt::sha1_update(sha1_ctx& ctx, const uint8_t *data, std::size_t len) 
 }
 
 int MiniCrypt::sha1_final(sha1_ctx& ctx, uint8_t *out) {
-    uint8_t pad[MC_SHA1_BLOCK_SIZE + 8] = {0};
+    uint8_t pad[SHA1_BLOCK_SIZE + 8] = {0};
     uint64_t bit_len = ctx.total_len * 8;
     pad[0] = 0x80;
     std::size_t rem = ctx.buffer_len;
-    std::size_t pad_len = (rem < 56) ? (56 - rem) : (MC_SHA1_BLOCK_SIZE + 56 - rem);
+    std::size_t pad_len = (rem < 56) ? (56 - rem) : (SHA1_BLOCK_SIZE + 56 - rem);
     for (int i = 0; i < 8; ++i) {
         pad[pad_len + i] = (uint8_t)(bit_len >> (56 - 8 * i));
     }

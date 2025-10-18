@@ -20,14 +20,14 @@
 #include <cstdint>
 #include <cstddef>
 
-#define MC_SHA256_BLOCK_SIZE 64
-#define MC_SHA256_DIGEST_SIZE 32
-
 namespace MiniCrypt {
+static inline const std::size_t SHA256_BLOCK_SIZE = 64;
+static inline const std::size_t SHA256_DIGEST_SIZE = 32;
+
 struct sha256_ctx {
     uint32_t state[8];
     uint64_t total_len;
-    uint8_t buffer[MC_SHA256_BLOCK_SIZE];
+    uint8_t buffer[SHA256_BLOCK_SIZE];
     std::size_t buffer_len;
 };
 
