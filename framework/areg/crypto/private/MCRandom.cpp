@@ -6,7 +6,7 @@
  * You should have received a copy of the AREG SDK license description in LICENSE.txt.
  * If not, please contact to info[at]aregtech.com
  *
- * \file        areg/logging/private/Layouts.cpp
+ * \file        areg/crypto/private/MCRandom.cpp
  * \ingroup     AREG SDK, Automated Real-time Event Grid Software Development Kit
  * \author      David Sugar
  * \brief       Generate cryptographic random values
@@ -14,12 +14,19 @@
 
 #if AREG_CRYPTO
 
-#include "MCRandom.hpp"
-#include <cstring>
-#include <cstddef>
+#include "areg/crypto/private/MCRandom.hpp"
+#include <cstdint>   // already included
+#include <cstddef>   // already included
 
-#if !defined(_MSC_VER) && !defined(_WIN32)
-#include <fcntl.h>
+#if defined(_WIN32) || defined(_MSC_VER)
+    // ssize_t is not defined on Windows, so define it
+    #ifndef ssize_t
+        #include <BaseTsd.h>
+        typedef SSIZE_T ssize_t;
+    #endif
+#else
+    #include <fcntl.h>
+    #include <unistd.h> // for ssize_t on POSIX
 #endif
 
 #define MAX_UINT54 ((1ULL << 54) - 1)
@@ -62,7 +69,7 @@ ssize_t MiniCrypt::random_fill(MiniCrypt::random_ctx& ctx, uint8_t *out, std::si
     if (!size || !out) return 0;
 #if defined(_WIN32) || defined(_MSC_VER)
     if (ctx.handle == 0) return 0;
-    return CryptGenRandom(ctx.handle, size, out) ? size : 0;
+    return CryptGenRandom(ctx.handle, static_cast<DWORD>(size), static_cast<BYTE *>(out)) ? size : 0;
 #else
     if (ctx.fd < 0) return 0;
     return read(ctx.fd, out, size); // FlawFinder: safe exit

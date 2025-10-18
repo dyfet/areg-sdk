@@ -570,6 +570,21 @@
     <ClCompile Include="areg\logging\private\IELogDatabaseEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCSha256.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCSha1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCMd5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="areg\system\windows\GEWindows.h">
@@ -1133,6 +1148,21 @@
     <ClInclude Include="areg\resources\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCHelper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCRandom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCSha256.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCSha1.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCMd5.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="areg\resources\areg.rc">
@@ -1187,5 +1217,6 @@
     <Text Include="areg\component\private\win32\CMakeLists.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="areg\crypto\private\CMakeLists.txt" />
   </ItemGroup>
 </Project>
