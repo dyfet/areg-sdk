@@ -6,7 +6,7 @@
  * You should have received a copy of the AREG SDK license description in LICENSE.txt.
  * If not, please contact to info[at]aregtech.com
  *
- * \file        areg/logging/private/Layouts.cpp
+ * \file        areg/crypto/private/MCRandom.hpp
  * \ingroup     AREG SDK, Automated Real-time Event Grid Software Development Kit
  * \author      David Sugar
  * \brief       Generate cryptographic random values
@@ -17,6 +17,7 @@
 
 #if AREG_CRYPTO
 
+#include <cstddef>
 #include <cstdint>
 #ifdef _MSC_VER
 #include <BaseTsd.h>

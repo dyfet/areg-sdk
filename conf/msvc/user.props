@@ -53,9 +53,10 @@
         <!-- ****************************************************************************************************************************** -->
         <!-- Add preprocessor defines here to set for all projects.                                                                         -->
         <!-- ****************************************************************************************************************************** -->
-        <!-- AREG_LOGS 	        : enable compilation with logging; remove if no logging required.                                           -->
+        <!-- AREG_LOGS 	        : enable or disable compilation with logging module of Areg library; remove if no logging required.         -->
         <!-- AREG_EXTENDED      : enable or disable extensions in AREG extended static library, which contain additional features.          -->
-        <AregCommonDefines>AREG_LOGS=$(AregLogs);AREG_EXTENDED=$(AregExtended);$(AregCommonDefines)</AregCommonDefines>
+        <!-- AREG_CRYPTO        : enable or disable compilation with crypto module of Areg library; remove is no crypto required.           -->
+        <AregCommonDefines>AREG_LOGS=$(AregLogs);AREG_EXTENDED=$(AregExtended);AREG_CRYPTO=$(AregCrypto);$(AregCommonDefines)</AregCommonDefines>
 
         <!-- ****************************************************************************************************************************** -->
         <!-- Advanced settings do not change or modify.                                                                                     -->

@@ -80,6 +80,11 @@
         <!-- ********************************************************************************************************************************** -->
         <AregLogs>1</AregLogs>
         <!-- ********************************************************************************************************************************** -->
+        <!-- Property to compile the source codes with enabled crypto. By default, the sources are compiled with crypto.                        -->
+        <!-- Set 0 to compile sources codes without crypto. Set 1 or ignore setting to compile with crypto enabled.                             -->
+        <!-- ********************************************************************************************************************************** -->
+        <AregCrypto>1</AregCrypto>
+        <!-- ********************************************************************************************************************************** -->
         <!-- Add Build type specific preprocessor defines here for Debug and Release to set for all projects.                                   -->
         <!-- If use in other projects, set following preprocessor definitions:                                                                  -->
         <!--   * IMP_AREG_DLL to import objects from areg.dll and IMP_AREG_LIB to import objects from AREG static library.                      -->
@@ -131,6 +136,9 @@
         </BuildMacro>
         <BuildMacro Include="AregLogs">
             <Value>$(AregLogs)</Value>
+        </BuildMacro>
+        <BuildMacro Include="AregCrypto">
+            <Value>$(AregCrypto)</Value>
         </BuildMacro>
         <BuildMacro Include="AregCommonDefines">
             <Value>$(AregCommonDefines)</Value>

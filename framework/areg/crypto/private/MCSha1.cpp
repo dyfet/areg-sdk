@@ -6,7 +6,7 @@
  * You should have received a copy of the AREG SDK license description in LICENSE.txt.
  * If not, please contact to info[at]aregtech.com
  *
- * \file        areg/logging/private/Layouts.cpp
+ * \file        areg/crypto/private/MCSha1.cpp
  * \ingroup     AREG SDK, Automated Real-time Event Grid Software Development Kit
  * \author      David Sugar
  * \brief       Sha1 Hash Digest functions
@@ -14,8 +14,8 @@
 
 #if AREG_CRYPTO
 
-#include "MCSha1.hpp"
-#include "MCHelper.hpp"
+#include "areg/crypto/private/MCSha1.hpp"
+#include "areg/crypto/private/MCHelper.hpp"
 #include <cstring>
 
 namespace {

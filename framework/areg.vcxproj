@@ -110,6 +110,11 @@
     <ClCompile Include="areg\base\private\NEDebug.cpp" />
     <ClCompile Include="areg\base\private\NEMemory.cpp" />
     <ClCompile Include="areg\base\private\NEUtilities.cpp" />
+    <ClCompile Include="areg\crypto\private\MCHelper.cpp" />
+    <ClCompile Include="areg\crypto\private\MCMd5.cpp" />
+    <ClCompile Include="areg\crypto\private\MCRandom.cpp" />
+    <ClCompile Include="areg\crypto\private\MCSha1.cpp" />
+    <ClCompile Include="areg\crypto\private\MCSha256.cpp" />
     <ClCompile Include="areg\ipc\private\IEServiceConnectionConsumer.cpp" />
     <ClCompile Include="areg\ipc\private\IEServiceRegisterProvider.cpp" />
     <ClCompile Include="areg\component\private\ServiceManagerEventProcessor.cpp" />
@@ -251,6 +256,11 @@
     <ClInclude Include="areg\base\TEString.hpp" />
     <ClInclude Include="areg\base\TEValue.hpp" />
     <ClInclude Include="areg\base\WideString.hpp" />
+    <ClInclude Include="areg\crypto\private\MCHelper.hpp" />
+    <ClInclude Include="areg\crypto\private\MCMd5.hpp" />
+    <ClInclude Include="areg\crypto\private\MCRandom.hpp" />
+    <ClInclude Include="areg\crypto\private\MCSha1.hpp" />
+    <ClInclude Include="areg\crypto\private\MCSha256.hpp" />
     <ClInclude Include="areg\ipc\IEServiceConnectionConsumer.hpp" />
     <ClInclude Include="areg\ipc\IEServiceRegisterProvider.hpp" />
     <ClInclude Include="areg\component\private\ClientInfo.hpp" />
@@ -428,6 +438,7 @@
     <Text Include="areg\component\private\CMakeLists.txt" />
     <Text Include="areg\component\private\posix\CMakeLists.txt" />
     <Text Include="areg\component\private\win32\CMakeLists.txt" />
+    <Text Include="areg\crypto\private\CMakeLists.txt" />
     <Text Include="areg\ipc\private\CMakeLists.txt" />
     <Text Include="areg\persist\private\CMakeLists.txt" />
     <Text Include="areg\logging\private\CMakeLists.txt" />

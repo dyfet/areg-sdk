@@ -6,7 +6,7 @@
  * You should have received a copy of the AREG SDK license description in LICENSE.txt.
  * If not, please contact to info[at]aregtech.com
  *
- * \file        areg/logging/private/Layouts.cpp
+ * \file        areg/crypto/private/MCMd5.cpp
  * \ingroup     AREG SDK, Automated Real-time Event Grid Software Development Kit
  * \author      David Sugar
  * \brief       MD5 Hash Digest functions
@@ -14,8 +14,8 @@
 
 #if AREG_CRYPTO
 
-#include "MCMd5.hpp"
-#include "MCHelper.hpp"
+#include "areg/crypto/private/MCMd5.hpp"
+#include "areg/crypto/private/MCHelper.hpp"
 #include <cstring>
 
 namespace {
@@ -230,7 +230,7 @@ int MiniCrypt::md5_digest(const void *data, std::size_t size, uint8_t *out, cons
     md5_init(ctx);
     if (salt)
         md5_update(ctx, salt, 16);
-    md5_update(ctx, static_cast<const uint8_t*>(data), size);
+    md5_update(ctx, static_cast<const uint8_t*>(data), static_cast<uint32_t>(size));
     return md5_final(ctx, out);
 }
 
