@@ -21,21 +21,6 @@
 #define SALT_SIZE 16
 
 namespace {
-static void sha1_normalize_key(const uint8_t *key, std::size_t keysize, uint8_t *out) {
-    if (keysize > MiniCrypt::SHA1_BLOCK_SIZE) {
-        std::uint8_t digest[MiniCrypt::SHA1_DIGEST_SIZE];
-        MiniCrypt::sha1_ctx key_ctx;
-        MiniCrypt::sha1_init(key_ctx);
-        MiniCrypt::sha1_update(key_ctx, key, keysize);
-        MiniCrypt::sha1_final(key_ctx, digest); // 20 bytes
-        MiniCrypt::memcpy(out, digest, MiniCrypt::SHA1_DIGEST_SIZE);
-        MiniCrypt::memset(out + MiniCrypt::SHA1_DIGEST_SIZE, 0, MiniCrypt::SHA1_BLOCK_SIZE - MiniCrypt::SHA1_DIGEST_SIZE);
-    } else {
-        MiniCrypt::memcpy(out, key, keysize);
-        MiniCrypt::memset(out + keysize, 0, MiniCrypt::SHA1_BLOCK_SIZE - keysize);
-    }
-}
-
 void sha256_normalize_key(const uint8_t *key, std::size_t keysize, uint8_t *out) {
     if (keysize > MiniCrypt::SHA256_BLOCK_SIZE) {
         MiniCrypt::sha256_ctx key_ctx;
@@ -50,30 +35,7 @@ void sha256_normalize_key(const uint8_t *key, std::size_t keysize, uint8_t *out)
 }
 }
 
-void MiniCrypt::hmac_sha1(const uint8_t *key, std::size_t keysize, const uint8_t *data, std::size_t size, uint8_t *out) {
-    uint8_t keyblock[SHA1_BLOCK_SIZE];
-    uint8_t ipad[SHA1_BLOCK_SIZE];
-    uint8_t opad[SHA1_BLOCK_SIZE];
-    sha1_normalize_key(key, keysize, keyblock);
-    for (std::size_t i = 0; i < SHA1_BLOCK_SIZE; ++i) {
-        ipad[i] = keyblock[i] ^ 0x36;
-        opad[i] = keyblock[i] ^ 0x5c;
-    }
-
-    sha1_ctx inner;
-    sha1_init(inner);
-    sha1_update(inner, ipad, SHA1_BLOCK_SIZE);
-    sha1_update(inner, data, size);
-    uint8_t inner_digest[SHA1_DIGEST_SIZE];
-    sha1_final(inner, inner_digest);
-    sha1_ctx outer;
-    sha1_init(outer);
-    sha1_update(outer, opad, SHA1_BLOCK_SIZE);
-    sha1_update(outer, inner_digest, SHA1_DIGEST_SIZE);
-    sha1_final(outer, out);
-}
-
-void MiniCrypt::hmac_sha256(const uint8_t *key, std::size_t keysize, const uint8_t *data, std::size_t size, uint8_t *out) {
+void MiniCrypt::hmac256(const uint8_t *key, std::size_t keysize, const uint8_t *data, std::size_t size, uint8_t *out) {
     uint8_t keyblock[SHA256_BLOCK_SIZE];
     uint8_t ipad[SHA256_BLOCK_SIZE];
     uint8_t opad[SHA256_BLOCK_SIZE];
@@ -107,10 +69,10 @@ void MiniCrypt::pbkdf2(const uint8_t *pass, std::size_t len, const uint8_t *salt
         salt_block[SALT_SIZE + 1] = (i >> 16) & 0xff;
         salt_block[SALT_SIZE + 2] = (i >> 8) & 0xff;
         salt_block[SALT_SIZE + 3] = i & 0xff;
-        hmac_sha256(pass, len, salt_block, SALT_SIZE + 4, U);
+        hmac256(pass, len, salt_block, SALT_SIZE + 4, U);
         MiniCrypt::memcpy(T, U, 32);
         for (uint32_t j = 1; j < rounds; ++j) {
-            hmac_sha256(pass, len, U, 32, U);
+            hmac256(pass, len, U, 32, U);
             for (int k = 0; k < 32; ++k)
                 T[k] ^= U[k];
         }
