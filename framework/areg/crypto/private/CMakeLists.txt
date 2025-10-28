@@ -4,5 +4,6 @@ macro_add_source(areg_SRC "${AREG_FRAMEWORK}"
     areg/crypto/private/MCSha256.cpp
     areg/crypto/private/MCHmac.cpp
     areg/crypto/private/MCAes.cpp
+    areg/crypto/private/CryptoHelper.cpp
 )
 
