@@ -59,12 +59,9 @@ public:
     }
 
     auto operator=(const std::byte *from) noexcept -> auto& {
-        if (from == nullptr) {
-            _empty = true;
-            return *this;
-        }
-        memcpy(_data, from, SIZE);
-        _empty = false;
+        _empty = from == nullptr ? true : false;
+        if (from != nullptr)
+            memcpy(_data, from, SIZE);
         return *this;
     }
 
