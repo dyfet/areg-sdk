@@ -28,6 +28,12 @@ public:
             memcpy(_data, from._data, SIZE);
     }
 
+    // Load a key value from a physical address object
+    TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr ? true : false) {
+        if (from != nullptr)
+            memcpy(_data, from, SIZE);
+    }
+
     // Adapts other binary types like std::string[_view}, spans, etc...
     template <typename BINARY>
     explicit TESecureArray(const BINARY& from) noexcept {
@@ -45,11 +51,20 @@ public:
         _erase();
     }
 
-
     auto operator=(const TESecureArray& from) noexcept -> auto& {
         if (this == &from) return *this;
         memcpy(_data, from._data, SIZE);
         _empty = from._empty;
+        return *this;
+    }
+
+    auto operator=(const std::byte *from) noexcept -> auto& {
+        if (from == nullptr) {
+            _empty = true;
+            return *this;
+        }
+        memcpy(_data, from, SIZE);
+        _empty = false;
         return *this;
     }
 
