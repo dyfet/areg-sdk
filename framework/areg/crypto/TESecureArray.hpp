@@ -29,7 +29,7 @@ public:
     }
 
     // Load a key value from a physical address object
-    TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr ? true : false) {
+    TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr) {
         if (from != nullptr)
             memcpy(_data, from, SIZE);
     }
@@ -59,7 +59,7 @@ public:
     }
 
     auto operator=(const std::byte *from) noexcept -> auto& {
-        _empty = from == nullptr ? true : false;
+        _empty = (from == nullptr);
         if (from != nullptr)
             memcpy(_data, from, SIZE);
         return *this;
