@@ -15,8 +15,9 @@
 #ifndef AREG_CRYPTO_TESECUREARRAY_HPP
 #define AREG_CRYPTO_TESECUREARRAY_HPP
 
-#include "areg/base/GEGlobal.h"
-#include <cstring>
+#if AREG_CRYPTO
+
+#include "areg/crypto/private/MCHelper.hpp"
 
 namespace NECrypto {
 template <std::size_t SIZE>
@@ -25,13 +26,13 @@ public:
     TESecureArray() noexcept = default;
     TESecureArray(const TESecureArray& from) noexcept : _empty(from._empty) {
         if (!_empty)
-            memcpy(_data, from._data, SIZE);
+            MiniCrypt::memcpy(_data, from._data, SIZE);
     }
 
     // Load a key value from a physical address object
     TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr) {
         if (from != nullptr)
-            memcpy(_data, from, SIZE);
+            MiniCrypt::memcpy(_data, from, SIZE);
     }
 
     // Adapts other binary types like std::string[_view}, spans, etc...
@@ -39,10 +40,10 @@ public:
     explicit TESecureArray(const BINARY& from) noexcept {
         auto len = std::min(SIZE, from.size());
         if (len) {
-            memcpy(&_data, from.data(), len);
+            MiniCrypt::memcpy(&_data, from.data(), len);
             // forces erasure of origin data...
             auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            memset(wp, 0, len);
+            MiniCrypt::memset(wp, 0, len);
             _empty = false;
         }
     }
@@ -53,7 +54,7 @@ public:
 
     auto operator=(const TESecureArray& from) noexcept -> auto& {
         if (this == &from) return *this;
-        memcpy(_data, from._data, SIZE);
+        MiniCrypt::memcpy(_data, from._data, SIZE);
         _empty = from._empty;
         return *this;
     }
@@ -61,7 +62,7 @@ public:
     auto operator=(const std::byte *from) noexcept -> auto& {
         _empty = (from == nullptr);
         if (from != nullptr)
-            memcpy(_data, from, SIZE);
+            MiniCrypt::memcpy(_data, from, SIZE);
         return *this;
     }
 
@@ -70,10 +71,10 @@ public:
         auto len = std::min(SIZE, from.size());
         if (len) {
             _empty = false;
-            memcpy(&_data, from.data(), len);
+            MiniCrypt::memcpy(&_data, from.data(), len);
             // Forces erasure of origin data
             auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            memset(wp, 0, len);
+            MiniCrypt::memset(wp, 0, len);
         }
         return *this;
     }
@@ -132,12 +133,12 @@ public:
 
     // memory safe copy so we can remove [] operators
     template <typename BINARY>
-    auto merge(std::size_t offset, const BINARY& from) -> std::size_t {
+    auto copy(std::size_t offset, const BINARY& from) -> std::size_t {
         if (offset >= SIZE || from.size() < 1) return 0;
         std::size_t count = from.size();
         if (count + offset > SIZE)
             count = SIZE - offset;
-        memcpy(_data, from.data(), count);
+        MiniCrypt::memcpy(_data, from.data(), count);
         return count;
     }
 
@@ -167,9 +168,10 @@ private:
     bool _empty{true};
 
     void _erase() noexcept {
-        memset(data(), 0, SIZE);
+        MiniCrypt::memset(data(), 0, SIZE);
     }
 };
 } // end namespace
+#endif
 #endif
 
