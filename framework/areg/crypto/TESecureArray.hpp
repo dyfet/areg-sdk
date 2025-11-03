@@ -94,7 +94,7 @@ public:
 
     // memory safe copy so we can remove [] operators
     template <typename BINARY>
-    auto copy(std::size_t offset, const BINARY& from) -> std::size_t {
+    auto copy(const BINARY& from, std::size_t offset = 0) -> std::size_t {
         if (offset >= SIZE || from.size() < 1) return 0;
         std::size_t count = from.size();
         if (count + offset >= SIZE)
