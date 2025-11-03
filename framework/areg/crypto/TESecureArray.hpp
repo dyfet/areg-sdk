@@ -97,9 +97,14 @@ public:
     auto copy(std::size_t offset, const BINARY& from) -> std::size_t {
         if (offset >= SIZE || from.size() < 1) return 0;
         std::size_t count = from.size();
-        if (count + offset > SIZE)
+        if (count + offset >= SIZE)
             count = SIZE - offset;
-        MiniCrypt::memcpy(_data, from.data(), count);
+
+        // copying is filling
+        if(count) {
+            MiniCrypt::memcpy(_data + offset, from.data(), count);
+            fill(true);
+        }
         return count;
     }
 
