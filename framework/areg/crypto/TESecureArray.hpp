@@ -29,15 +29,9 @@ public:
             MiniCrypt::memcpy(_data, from._data, SIZE);
     }
 
-    // Load a key value from a physical address object
-    TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr) {
-        if (from != nullptr)
-            MiniCrypt::memcpy(_data, from, SIZE);
-    }
-
     // Adapts other binary types like std::string[_view}, spans, etc...
     template <typename BINARY>
-    explicit TESecureArray(const BINARY& from) noexcept {
+    TESecureArray(const BINARY& from) noexcept {
         auto len = std::min(SIZE, from.size());
         if (len) {
             MiniCrypt::memcpy(&_data, from.data(), len);
@@ -56,13 +50,6 @@ public:
         if (this == &from) return *this;
         MiniCrypt::memcpy(_data, from._data, SIZE);
         _empty = from._empty;
-        return *this;
-    }
-
-    auto operator=(const std::byte *from) noexcept -> auto& {
-        _empty = (from == nullptr);
-        if (from != nullptr)
-            MiniCrypt::memcpy(_data, from, SIZE);
         return *this;
     }
 
