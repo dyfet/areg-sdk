@@ -17,161 +17,347 @@
 
 #if AREG_CRYPTO
 
+#include "areg/base/NEMath.hpp"
+#include "areg/base/NEMemory.hpp"
 #include "areg/crypto/private/MCHelper.hpp"
 
-namespace NECrypto {
+//////////////////////////////////////////////////////////////////////////
+// EventData class declaration
+//////////////////////////////////////////////////////////////////////////
+/**
+ * \brief   TESecureArray class, used to hold secure data in stack memory.
+ **/
 template <std::size_t SIZE>
-class TESecureArray final {
+class TESecureArray final
+{
+    static_assert(SIZE > 0, "Secure data size invalid");
+
+//////////////////////////////////////////////////////////////////////////
+// Constructors / Destructor
+//////////////////////////////////////////////////////////////////////////
 public:
     TESecureArray() noexcept = default;
-    TESecureArray(const TESecureArray& from) noexcept : _empty(from._empty) {
-        if (!_empty)
-            MiniCrypt::memcpy(_data, from._data, SIZE);
-    }
+    TESecureArray(const TESecureArray<SIZE>& from) noexcept;
 
     // Load a key value from a physical address object
-    TESecureArray(const std::byte *from) noexcept : _empty(from == nullptr) {
-        if (from != nullptr)
-            MiniCrypt::memcpy(_data, from, SIZE);
-    }
+    TESecureArray(const std::byte* from) noexcept;
 
     // Adapts other binary types like std::string[_view}, spans, etc...
     template <typename BINARY>
-    explicit TESecureArray(const BINARY& from) noexcept {
-        auto len = std::min(SIZE, from.size());
-        if (len) {
-            MiniCrypt::memcpy(&_data, from.data(), len);
-            // forces erasure of origin data...
-            auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            MiniCrypt::memset(wp, 0, len);
-            _empty = false;
-        }
-    }
+    explicit TESecureArray(const BINARY& from) noexcept;
 
-    ~TESecureArray() noexcept {
-        _erase();
-    }
+    ~TESecureArray() noexcept;
 
-    auto operator=(const TESecureArray& from) noexcept -> auto& {
-        if (this == &from) return *this;
-        MiniCrypt::memcpy(_data, from._data, SIZE);
-        _empty = from._empty;
-        return *this;
-    }
+//////////////////////////////////////////////////////////////////////////
+// operators
+//////////////////////////////////////////////////////////////////////////
+public:
+    TESecureArray<SIZE>& operator = (const TESecureArray<SIZE>& from) noexcept;
 
-    auto operator=(const std::byte *from) noexcept -> auto& {
-        _empty = (from == nullptr);
-        if (from != nullptr)
-            MiniCrypt::memcpy(_data, from, SIZE);
-        return *this;
-    }
+    TESecureArray<SIZE>& operator=(const std::byte* from) noexcept;
 
     template <typename BINARY>
-    auto operator=(const BINARY& from) noexcept -> TESecureArray& {
-        auto len = std::min(SIZE, from.size());
-        if (len) {
-            _empty = false;
-            MiniCrypt::memcpy(&_data, from.data(), len);
-            // Forces erasure of origin data
-            auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            MiniCrypt::memset(wp, 0, len);
-        }
-        return *this;
-    }
+    TESecureArray<SIZE>& operator = (const BINARY& from) noexcept;
 
-    auto operator==(const TESecureArray& other) const noexcept {
-        if (other._empty != _empty) return false;
-        return memcmp(_data, other._data, SIZE) == 0;
-    }
+    bool operator == (const TESecureArray<SIZE>& other) const noexcept;
 
-    auto operator!=(const TESecureArray& other) const noexcept {
-        if (other._empty != _empty) return true;
-        return memcmp(_data, other._data, SIZE) != 0;
-    }
+    bool operator != (const TESecureArray<SIZE>& other) const noexcept;
 
-    auto operator^=(const TESecureArray& other) noexcept -> TESecureArray& {
-        for (unsigned pos = 0; pos < SIZE; ++pos) {
-            _data[pos] ^= other._data[pos];
-        }
-        return *this;
-    }
+    TESecureArray<SIZE>& operator ^=(const TESecureArray<SIZE>& other) noexcept;
 
-    auto operator&=(const TESecureArray& other) noexcept -> TESecureArray& {
-        for (unsigned pos = 0; pos < SIZE; ++pos) {
-            _data[pos] &= other._data[pos];
-        }
-        return *this;
-    }
+    TESecureArray<SIZE>& operator &= (const TESecureArray<SIZE>& other) noexcept;
 
-    auto operator|=(const TESecureArray& other) noexcept -> TESecureArray& {
-        for (unsigned pos = 0; pos < SIZE; ++pos) {
-            _data[pos] |= other._data[pos];
-        }
-        return *this;
-    }
+    TESecureArray<SIZE>& operator |= (const TESecureArray<SIZE>& other) noexcept;
 
-    auto toBytes() noexcept {
-        return reinterpret_cast<uint8_t *>(&_data);
-    }
+    // These provide standard duck type methods and bindings like std::
+    constexpr operator bool() const noexcept;
 
-    auto toBytes() const noexcept {
-        return reinterpret_cast<const uint8_t *>(&_data);
-    }
+    constexpr bool operator!() const noexcept;
 
-    auto toHex() const noexcept -> std::string {
-        constexpr char hex[] = "0123456789ABCDEF";
-        std::string out;
-        out.reserve(SIZE * 2);
-        std::size_t pos{0};
-        while (pos < SIZE) {
-            auto val = uint8_t(_data[pos++]);
-            out.push_back(hex[val >> 4]);
-            out.push_back(hex[val & 0x0f]);
-        }
-        return out;
-    }
+//////////////////////////////////////////////////////////////////////////
+// Attributes
+//////////////////////////////////////////////////////////////////////////
+public:
+
+    uint8_t* toBytes() noexcept;
+
+    const uint8_t* toBytes() const noexcept;
+
+    constexpr const std::byte* data() const noexcept;
+    constexpr std::byte* data() noexcept;
+
+    constexpr std::size_t size() const noexcept;
+
+    constexpr bool empty() const noexcept;
+
+//////////////////////////////////////////////////////////////////////////
+// Operations
+//////////////////////////////////////////////////////////////////////////
+public:
+
+    std::string toHex() const noexcept;
 
     // memory safe copy so we can remove [] operators
     template <typename BINARY>
-    auto copy(std::size_t offset, const BINARY& from) -> std::size_t {
-        if (offset >= SIZE || from.size() < 1) return 0;
-        std::size_t count = from.size();
-        if (count + offset > SIZE)
-            count = SIZE - offset;
-        MiniCrypt::memcpy(_data, from.data(), count);
-        return count;
-    }
+    std::size_t copy(std::size_t offset, const BINARY &  from);
 
     // Used to help fill routines mark if successfully filling
-    auto fill(bool flag = true) noexcept {
-        if (flag) _empty = false;
-        return flag;
-    }
+    bool fill(bool flag = true) noexcept;
 
     // Used to mark array as cleared / has stale data
-    void clear() noexcept {
-        if (!_empty) _erase();
-        _empty = true;
-    }
+    void clear() noexcept;
 
-    // These provide standard duck type methods and bindings like std::
-    constexpr operator bool() const noexcept { return !_empty; }
-    constexpr auto operator!() const noexcept { return _empty; }
-    constexpr auto data() const noexcept -> const std::byte * { return _data; };
-    constexpr auto data() noexcept -> std::byte * { return _data; };
-    constexpr auto size() const noexcept { return SIZE; };
-    constexpr auto empty() const noexcept { return _empty; }
-
+//////////////////////////////////////////////////////////////////////////
+// Hidden methods
+//////////////////////////////////////////////////////////////////////////
 private:
-    static_assert(SIZE > 0, "Secure data size invalid");
-    std::byte _data[SIZE]{};
-    bool _empty{true};
 
-    void _erase() noexcept {
-        MiniCrypt::memset(data(), 0, SIZE);
-    }
+    void _erase() noexcept;
+
+//////////////////////////////////////////////////////////////////////////
+// Member variables
+//////////////////////////////////////////////////////////////////////////
+private:
+    std::byte   mData[SIZE]{};
+    bool        mIsEmpty;
+
 };
-} // end namespace
-#endif
-#endif
 
+//////////////////////////////////////////////////////////////////////////
+// TESecureArray implementation
+//////////////////////////////////////////////////////////////////////////
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>::TESecureArray(const TESecureArray<SIZE>& from) noexcept
+    : mIsEmpty(from.mIsEmpty)
+{
+    if (!mIsEmpty)
+    {
+        NEMemory::memCopy(mData, SIZE, from.mData, from.size());
+    }
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>::TESecureArray(const std::byte* from) noexcept
+    : mIsEmpty  (from == nullptr)
+{
+    if (from != nullptr)
+    {
+        NEMemory::memCopy(mData, SIZE, from, SIZE);
+    }
+}
+
+template <std::size_t SIZE>
+template <typename BINARY>
+TESecureArray<SIZE>::TESecureArray(const BINARY& from) noexcept
+    : mIsEmpty(true)
+{
+    auto len = std::min(SIZE, from.size());
+    if (len)
+    {
+        NEMemory::memCopy(mData, SIZE, from.data(), len);
+        // forces erasure of origin data...
+        auto wp = const_cast<void*>(reinterpret_cast<const void*>(from.data()));
+        NEMemory::memZero(wp, from.size());
+        mIsEmpty = false;
+    }
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>::~TESecureArray() noexcept
+{
+    _erase();
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator = (const TESecureArray<SIZE>& from) noexcept
+{
+    if (this != &from)
+    {
+        NEMemory::memCopy(mData, SIZE, from.mData, from.size());
+        mIsEmpty = from.mIsEmpty;
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator=(const std::byte* from) noexcept
+{
+    mIsEmpty = (from == nullptr);
+    if (from != nullptr)
+    {
+        MiniCrypt::memcpy(mData, SIZE, from, SIZE);
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+template <typename BINARY>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator = (const BINARY& from) noexcept
+{
+    auto len = std::min(SIZE, from.size());
+    if (len)
+    {
+        mIsEmpty = false;
+        NEMemory::memCopy(&mData, SIZE, from.data(), len);
+        // Forces erasure of origin data
+        const void* wp = reinterpret_cast<const void*>(from.data());
+        NEMemory::memZero(const_cast<void *>(wp), from.size());
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+bool TESecureArray<SIZE>::operator == (const TESecureArray<SIZE>& other) const noexcept
+{
+    return (this == &other) || ((other.mIsEmpty == mIsEmpty) && NEMemory::memEqual(mData, other.mData, SIZE));
+}
+
+template <std::size_t SIZE>
+bool TESecureArray<SIZE>::operator != (const TESecureArray<SIZE>& other) const noexcept
+{
+    return (this != &other) && ((other.mIsEmpty != mIsEmpty) || (NEMemory::memEqual(mData, other.mData, SIZE) == false));
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator ^=(const TESecureArray<SIZE>& other) noexcept
+{
+    if (this != &other)
+    {
+        for (uint32_t pos = 0; pos < SIZE; ++pos)
+            mData[pos] ^= other.mData[pos];
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator &= (const TESecureArray<SIZE>& other) noexcept
+{
+    if (this != &other)
+    {
+        for (uint32_t pos = 0; pos < SIZE; ++pos)
+            mData[pos] &= other.mData[pos];
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+TESecureArray<SIZE>& TESecureArray<SIZE>::operator |= (const TESecureArray<SIZE>& other) noexcept
+{
+    if (this != &other)
+    {
+        for (uint32_t pos = 0; pos < SIZE; ++pos)
+            mData[pos] |= other.mData[pos];
+    }
+
+    return *this;
+}
+
+template <std::size_t SIZE>
+uint8_t* TESecureArray<SIZE>::toBytes() noexcept
+{
+    return static_cast<uint8_t *>(mData);
+}
+
+template <std::size_t SIZE>
+const uint8_t* TESecureArray<SIZE>::toBytes() const noexcept
+{
+    return static_cast<const uint8_t*>(mData);
+}
+
+template <std::size_t SIZE>
+std::string TESecureArray<SIZE>::toHex() const noexcept
+{
+    constexpr char hex[] = "0123456789ABCDEF";
+    std::string out;
+    out.reserve(SIZE * 2);
+    std::size_t pos{ 0 };
+    for (std::size_t pos = 0; pos < SIZE; ++pos)
+    {
+        auto val = uint8_t(mData[pos]);
+        out.push_back(hex[val >> 4]);
+        out.push_back(hex[val & 0x0f]);
+    }
+
+    return out;
+}
+
+template <std::size_t SIZE>
+template <typename BINARY>
+std::size_t  TESecureArray<SIZE>::copy(std::size_t offset, const BINARY& from)
+{
+    if ((offset >= SIZE) || (from.size() < 1))
+        return 0;
+
+    std::size_t count = from.size();
+    if (count + offset > SIZE)
+        count = SIZE - offset;
+
+    NEMemory::memCopy(mData, SIZE, from.data(), count);
+    return count;
+}
+
+template <std::size_t SIZE>
+bool TESecureArray<SIZE>::fill(bool flag /*= true*/) noexcept
+{
+    mIsEmpty = flag ? false : mIsEmpty;
+    return flag;
+}
+
+template <std::size_t SIZE>
+void TESecureArray<SIZE>::clear() noexcept
+{
+    if (!mIsEmpty)
+        _erase();
+
+    mIsEmpty = true;
+}
+
+template <std::size_t SIZE>
+constexpr TESecureArray<SIZE>::operator bool() const noexcept
+{
+    return !mIsEmpty;
+}
+
+template <std::size_t SIZE>
+constexpr bool TESecureArray<SIZE>::operator ! () const noexcept
+{
+    return mIsEmpty;
+}
+
+template <std::size_t SIZE>
+constexpr const std::byte* TESecureArray<SIZE>::data() const noexcept
+{
+    return mData;
+}
+
+template <std::size_t SIZE>
+constexpr std::byte* TESecureArray<SIZE>::data() noexcept
+{
+    return mData;
+}
+
+template <std::size_t SIZE>
+constexpr std::size_t TESecureArray<SIZE>::size() const noexcept
+{
+    return SIZE;
+}
+
+template <std::size_t SIZE>
+constexpr bool TESecureArray<SIZE>::empty() const noexcept
+{
+    return mIsEmpty;
+}
+
+template <std::size_t SIZE>
+void TESecureArray<SIZE>::_erase() noexcept
+{
+    NEMemory::memZero(data(), SIZE);
+}
+#endif  // AREG_CRYPTO
+#endif  // AREG_CRYPTO_TESECUREARRAY_HPP

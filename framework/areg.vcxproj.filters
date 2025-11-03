@@ -579,10 +579,13 @@
     <ClCompile Include="areg\crypto\private\MCSha256.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="areg\crypto\private\MCSha1.cpp">
+    <ClCompile Include="areg\crypto\private\MCHmac.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="areg\crypto\private\MCMd5.cpp">
+    <ClCompile Include="areg\crypto\private\CryptoHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="areg\crypto\private\MCAes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1157,10 +1160,16 @@
     <ClInclude Include="areg\crypto\private\MCSha256.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="areg\crypto\private\MCSha1.hpp">
+    <ClInclude Include="areg\crypto\TESecureArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="areg\crypto\private\MCMd5.hpp">
+    <ClInclude Include="areg\crypto\private\MCHmac.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\CryptoHelper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="areg\crypto\private\MCAes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

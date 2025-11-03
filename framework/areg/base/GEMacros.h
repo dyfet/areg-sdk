@@ -168,6 +168,22 @@
                 ( (static_cast<uint64_t>(bits_8_0  ) <<  0) & static_cast<uint64_t>(0x00000000000000FF) )  )
 #endif  // MACRO_CONSTRUCT_64
 
+#ifndef MACRO_BUFFER_TO_32NUM
+    #define MACRO_BUFFER_TO_32NUM(buf)                                                                                      \
+            (   ( (static_cast<uint32_t>(buf[0]) << 0) & 0x000000FF) |                                                      \
+                ( (static_cast<uint32_t>(buf[1]) << 8) & 0x0000FF00) |                                                      \
+                ( (static_cast<uint32_t>(buf[0]) << 0) & 0x00FF0000) |                                                      \
+                ( (static_cast<uint32_t>(buf[0]) << 0) & 0x0000FF00)  )
+#endif  // MACRO_BUFFER_TO_32NUM
+
+#ifndef MACRO_32NUM_TO_BUFFER
+    #define MACRO_32NUM_TO_BUFFER(val, buf)                                                                                 \
+                    buf[0] = static_cast<uint8_t>((val >>  0) & 0x000000FF);                                                \
+                    buf[1] = static_cast<uint8_t>((val >>  8) & 0x000000FF);                                                \
+                    buf[2] = static_cast<uint8_t>((val >> 16) & 0x000000FF);                                                \
+                    buf[3] = static_cast<uint8_t>((val >> 24) & 0x000000FF);
+#endif  // MACRO_32NUM_TO_BUFFER
+
 /**
  * \brief   Compute the difference (delta) between 2 digits
  **/
