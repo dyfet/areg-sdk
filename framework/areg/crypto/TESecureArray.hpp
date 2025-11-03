@@ -29,19 +29,6 @@ public:
             MiniCrypt::memcpy(_data, from._data, SIZE);
     }
 
-    // Adapts other binary types like std::string[_view}, spans, etc...
-    template <typename BINARY>
-    TESecureArray(const BINARY& from) noexcept {
-        auto len = std::min(SIZE, from.size());
-        if (len) {
-            MiniCrypt::memcpy(&_data, from.data(), len);
-            // forces erasure of origin data...
-            auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            MiniCrypt::memset(wp, 0, len);
-            _empty = false;
-        }
-    }
-
     ~TESecureArray() noexcept {
         _erase();
     }
@@ -50,19 +37,6 @@ public:
         if (this == &from) return *this;
         MiniCrypt::memcpy(_data, from._data, SIZE);
         _empty = from._empty;
-        return *this;
-    }
-
-    template <typename BINARY>
-    auto operator=(const BINARY& from) noexcept -> TESecureArray& {
-        auto len = std::min(SIZE, from.size());
-        if (len) {
-            _empty = false;
-            MiniCrypt::memcpy(&_data, from.data(), len);
-            // Forces erasure of origin data
-            auto wp = const_cast<void *>(reinterpret_cast<const void *>(from.data()));
-            MiniCrypt::memset(wp, 0, len);
-        }
         return *this;
     }
 
