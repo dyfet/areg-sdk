@@ -29,3 +29,9 @@ auto NECrypto::EncodeHex(std::string_view input) noexcept -> std::string {
 }
 
 #endif
+
+// WARNING: THIS IS TEMPORARY CODE TO HELP TESTING BUILD OF HEADER ONLY
+// COMPONENTS THAT HAVE NO BUILDS YET.  REMOVE WHEN NO LONGER NEEDED>
+
+#include "areg/crypto/TESecureArray.hpp"
+
