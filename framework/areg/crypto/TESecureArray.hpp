@@ -18,6 +18,7 @@
 #if AREG_CRYPTO
 
 #include "areg/crypto/private/MCHelper.hpp"
+#include "areg/crypto/private/CryptoHelper.hpp"
 
 namespace NECrypto {
 template <std::size_t SIZE>
@@ -80,16 +81,7 @@ public:
     }
 
     auto toHex() const noexcept -> std::string {
-        constexpr char hex[] = "0123456789ABCDEF";
-        std::string out;
-        out.reserve(SIZE * 2);
-        std::size_t pos{0};
-        while (pos < SIZE) {
-            auto val = uint8_t(_data[pos++]);
-            out.push_back(hex[val >> 4]);
-            out.push_back(hex[val & 0x0f]);
-        }
-        return out;
+        return ToHex(*this);
     }
 
     // memory safe copy so we can remove [] operators
