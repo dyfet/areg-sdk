@@ -28,9 +28,9 @@ using Sha512 = TESecureArray<64>;
 
 // Selects backend header library based on defines...
 #if AREG_CRYPTO_OPENSSL
-#include "areg/crypto/private/CeyptoOpenssl.hpp"
+#include "areg/crypto/private/CryptoOpenssl.hpp"
 #elif AREG_CRYPTO_SODIUM
-#include "areg/crypto/private/CeyptoSodium.hpp"
+#include "areg/crypto/private/CryptoSodium.hpp"
 #else
 #include "areg/crypto/private/CryptoMinicrypt.hpp"
 #endif
