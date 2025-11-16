@@ -33,5 +33,9 @@ auto NECrypto::EncodeHex(std::string_view input) noexcept -> std::string {
 // WARNING: THIS IS TEMPORARY CODE TO HELP TESTING BUILD OF HEADER ONLY
 // COMPONENTS THAT HAVE NO BUILDS YET.  REMOVE WHEN NO LONGER NEEDED>
 
+// Easy selection for testing of backends...
+//#define AREG_CRYPTO_OPENSSL 1
+//#define AREG_CRYPTO_SODIUM 1
+
 #include "areg/crypto/Crypto.hpp"
 
